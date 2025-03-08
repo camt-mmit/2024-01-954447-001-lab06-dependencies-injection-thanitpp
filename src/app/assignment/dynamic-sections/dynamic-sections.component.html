@@ -1,0 +1,14 @@
+<div class="container" style="padding: 10px">
+  <button (click)="addSection()" style="display: block; margin-bottom: 10px">
+    + Section
+  </button>
+  <div *ngFor="let section of sections; let i = index">
+    <app-dynamic-inputs
+      [sectionIndex]="i"
+      [initialValues]="section"
+      [sectionCount]="getSectionCount()"
+      (inputsChange)="updateInputs(i, $event)"
+      (removeSection)="removeSection($event)"
+    ></app-dynamic-inputs>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+.section {
+  margin-bottom: 20px;
+}
+
+.button-group {
+  margin: 10px 0;
+}
+
+.button-group button {
+  margin-right: 10px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.input-group label {
+  width: 80px; /* Fixed width for alignment */
+  margin-right: 10px;
+}
+
+.input-group input {
+  margin-right: 5px;
+}
+
+.result {
+  margin-top: 10px;
+  font-weight: bold;
+}

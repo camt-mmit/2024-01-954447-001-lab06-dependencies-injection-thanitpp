@@ -1,0 +1,30 @@
+<div class="section">
+  <h3>Section {{ sectionIndex + 1 }}</h3>
+
+  <div class="button-group">
+    <button (click)="addInput()">Add Input</button>
+    <button (click)="removeThisSection()" [disabled]="isRemoveSectionDisabled">
+      Remove Section
+    </button>
+  </div>
+
+  <div
+    *ngFor="let input of inputs.controls; let inputIndex = index"
+    class="input-group"
+  >
+    <label [for]="'input-' + sectionIndex + '-' + inputIndex"
+      >Number {{ inputIndex + 1 }}</label
+    >
+    <input
+      [id]="'input-' + sectionIndex + '-' + inputIndex"
+      [formControl]="input"
+      type="number"
+      placeholder="Enter value"
+    />
+    <button (click)="removeInput(inputIndex)" [disabled]="inputs.length <= 1">
+      -
+    </button>
+  </div>
+
+  <div class="result">Result: {{ getTotal() }}</div>
+</div>
