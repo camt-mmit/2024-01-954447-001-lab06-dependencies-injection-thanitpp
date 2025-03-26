@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { DynamicDataService } from '../dynamic-data.service';
 import { DynamicInputsComponent } from '../dynamic-inputs/dynamic-inputs.component';
 
 @Component({
@@ -11,16 +12,15 @@ import { DynamicInputsComponent } from '../dynamic-inputs/dynamic-inputs.compone
 export class DynamicSectionsComponent implements OnInit {
   sections: number[][] = [[0]];
 
+  constructor(private dataService: DynamicDataService) {}
+
   ngOnInit() {
-    const savedData = localStorage.getItem('sections');
-    if (savedData) {
-      this.sections = JSON.parse(savedData);
-    }
+    this.loadAllSections();
   }
 
   addSection() {
     this.sections.push([0]);
-    this.saveToLocalStorage();
+    this.saveAllSections();
   }
 
   removeSection(index: number) {
@@ -30,23 +30,58 @@ export class DynamicSectionsComponent implements OnInit {
       index < this.sections.length
     ) {
       this.sections.splice(index, 1);
-      this.saveToLocalStorage();
+      this.reindexSections();
     }
   }
 
   updateInputs(index: number, values: number[]) {
     if (index >= 0 && index < this.sections.length) {
-      this.sections[index].splice(0, this.sections[index].length);
-      values.forEach((value) => this.sections[index].push(value));
-      this.saveToLocalStorage();
+      this.sections[index] = values;
+      this.dataService.saveSection(index, values); // Save immediately when inputs change
     }
   }
 
-  saveToLocalStorage() {
-    localStorage.setItem('sections', JSON.stringify(this.sections));
+  private loadAllSections() {
+    this.sections = [];
+    let index = 0;
+    while (true) {
+      const values = this.dataService.loadSection(index);
+      if (!values) break; // Stop when no more sections are found
+      this.sections.push(values);
+      index++;
+    }
+    // Ensure at least one section exists
+    if (this.sections.length === 0) {
+      this.sections.push([0]);
+    }
+  }
+
+  private saveAllSections() {
+    this.sections.forEach((section, index) =>
+      this.dataService.saveSection(index, section),
+    );
+    // Clean up any orphaned sections
+    for (let i = this.sections.length; ; i++) {
+      const values = this.dataService.loadSection(i);
+      if (!values) break;
+      this.dataService.removeSection(i);
+    }
+  }
+
+  private reindexSections() {
+    // Re-save all sections with updated indices
+    this.sections.forEach((section, index) =>
+      this.dataService.saveSection(index, section),
+    );
+    // Remove any leftover sections beyond current length
+    for (let i = this.sections.length; ; i++) {
+      const values = this.dataService.loadSection(i);
+      if (!values) break;
+      this.dataService.removeSection(i);
+    }
   }
 
   getSectionCount(): number {
-    return this.sections.length; // Helper method to pass section count
+    return this.sections.length;
   }
 }

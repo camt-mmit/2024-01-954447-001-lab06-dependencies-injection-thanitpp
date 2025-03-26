@@ -19,12 +19,14 @@
       [id]="'input-' + sectionIndex + '-' + inputIndex"
       [formControl]="input"
       type="number"
-      placeholder="Enter value"
+      placeholder="Enter value and press Enter to save"
+      (keypress)="onKeyPress($event, inputIndex)"
     />
     <button (click)="removeInput(inputIndex)" [disabled]="inputs.length <= 1">
       -
     </button>
   </div>
 
-  <div class="result">Result: {{ getTotal() }}</div>
+  <div class="result">Result: {{ total }}</div>
+  <!-- Use total property instead of getTotal() -->
 </div>
